@@ -1,0 +1,31 @@
+version: "3.8"
+
+name: PrepServiceS3
+services:
+  minio:
+    container_name: prep-minio
+    image: minio/minio
+    # this port expose the MinIO console, you can hide it and reroute using nginx
+    ports:
+      - '9090:9090'
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-supa-storage}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-secret1234}
+      # uncomment this if you want to use a custom domain
+      # MINIO_SERVER_URL: https://s3.mfathonin.local
+    command: server --console-address ":9090" /data
+    volumes:
+      - ./volumes/storage-minio:/data:z
+
+  minio-createbucket:
+    container_name: prep-minio-createbucket
+    image: minio/mc
+    depends_on:
+      minio:
+        condition: service_started
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set supa-minio http://minio:9000 ${MINIO_ROOT_USER:-supa-storage} ${MINIO_ROOT_PASSWORD:-secret1234};
+      /usr/bin/mc mb supa-minio/${MINIO_S3_BUCKET:-stub};
+      exit 0;
+      "
