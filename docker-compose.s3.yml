@@ -1,6 +1,6 @@
 version: "3.8"
 
-name: PrepServiceS3
+name: prep-service-s3
 services:
   minio:
     container_name: prep-minio

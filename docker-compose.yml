@@ -291,7 +291,7 @@ services:
       IMGPROXY_USE_ETAG: "true"
       IMGPROXY_ENABLE_WEBP_DETECTION: ${IMGPROXY_ENABLE_WEBP_DETECTION}
     volumes:
-      - ./volumes/storage:/var/lib/storage:z
+      - ./volumes/storage-minio:/var/lib/storage:z
 
   meta:
     container_name: supabase-meta
